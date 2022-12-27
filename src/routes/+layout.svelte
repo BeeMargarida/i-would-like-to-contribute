@@ -1,10 +1,25 @@
 <script lang="ts">
-	import { SvelteUIProvider } from '@svelteuidev/core';
+	import { colorScheme, ActionIcon, SvelteUIProvider } from '@svelteuidev/core';
+	import { Sun, Moon } from 'radix-icons-svelte';
 
-	let theme: 'dark' | 'light' = 'light';
+	function toggleTheme() {
+		colorScheme.update((v) => (v === 'light' ? 'dark' : 'light'));
+	}
 </script>
 
-<SvelteUIProvider themeObserver={theme} withGlobalStyles withNormalizeCSS>
+<SvelteUIProvider themeObserver={$colorScheme} withGlobalStyles withNormalizeCSS>
+	<ActionIcon
+		override={{ position: 'absolute', top: 0, right: 0, margin: '1rem' }}
+		variant="default"
+		on:click={toggleTheme}
+		size={30}
+	>
+		{#if $colorScheme === 'dark'}
+			<Moon />
+		{:else}
+			<Sun />
+		{/if}
+	</ActionIcon>
 	<div class="app">
 		<slot />
 	</div>
