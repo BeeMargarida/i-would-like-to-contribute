@@ -37,6 +37,5 @@
 	}
 	.app {
 		margin-top: 2rem;
-		font-family: 'Fredoka One';
 	}
 </style>
