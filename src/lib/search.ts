@@ -14,9 +14,11 @@ export type Repo = {
 	name: string;
 	description: string;
 	url: string;
+	html_url: string;
 	stargazers_count: number;
 	forks_count: number;
 	license: { name: string };
+	topics: string[];
 };
 
 export async function searchProjects(
@@ -43,5 +45,11 @@ export async function searchProjects(
 			Object.values(filters).join(' ')
 		)}&per_page=${entries}&page=${page}`
 	);
-	return await response.json();
+
+	if (response.ok) {
+		return await response.json();
+	}
+
+	const error = await response.json();
+	throw new Error(error.message);
 }
