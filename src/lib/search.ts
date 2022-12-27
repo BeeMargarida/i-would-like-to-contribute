@@ -23,7 +23,7 @@ export type Repo = {
 
 export async function searchProjects(
 	params: Params,
-	page = 0,
+	page = 1,
 	entries = 10
 ): Promise<{ items: Repo[]; total_count: number }> {
 	const filters: Record<string, string> = {};
