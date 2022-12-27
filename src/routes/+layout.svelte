@@ -29,13 +29,14 @@
 <style>
 	@font-face {
 		font-family: 'Fredoka One';
-		src: url('FredokaOne-Regular.woff2') format('woff2'),
-			url('FredokaOne-Regular.woff') format('woff');
+		src: url('/fonts/FredokaOne-Regular.woff2') format('woff2'),
+			url('/fonts/FredokaOne-Regular.woff') format('woff');
 		font-weight: normal;
 		font-style: normal;
 		font-display: swap;
 	}
 	.app {
 		margin-top: 2rem;
+		font-family: 'Fredoka One';
 	}
 </style>
