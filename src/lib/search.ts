@@ -16,6 +16,7 @@ export type Repo = {
 	url: string;
 	stargazers_count: number;
 	forks_count: number;
+	license: { name: string };
 };
 
 export async function searchProjects(
