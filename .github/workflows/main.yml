@@ -1,0 +1,24 @@
+name: Main Workflow
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+jobs:
+  build:
+    name: Actions
+    strategy:
+      matrix:
+        node-version: [18]
+    runs-on: ubuntu-latest
+    container:
+      image: node:${{ matrix.node-version }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: yarn --immutable
+      - run: yarn run format
+      - run: yarn run lint
