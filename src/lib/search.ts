@@ -21,11 +21,7 @@ export type Repo = {
 	topics: string[];
 };
 
-export async function searchProjects(
-	params: Params,
-	page = 1,
-	entries = 10
-): Promise<{ items: Repo[]; total_count: number }> {
+export function buildQuery(params: Params): string {
 	const filters: Record<string, string> = {};
 	for (const [key, param] of Object.entries(params)) {
 		if (!param) continue;
@@ -38,11 +34,21 @@ export async function searchProjects(
 		}
 	}
 
+	return Object.values(filters).join(' ');
+}
+
+export async function searchProjects(
+	params: Params,
+	page = 1,
+	entries = 10
+): Promise<{ items: Repo[]; total_count: number }> {
+	const query = buildQuery(params);
+
 	// @TODO: check if necessary to use Authenticated requests to get more
 	// than 10 requests per minute
 	const response = await fetch(
 		`https://api.github.com/search/repositories?q=${encodeURIComponent(
-			Object.values(filters).join(' ')
+			query
 		)}&per_page=${entries}&page=${page}`
 	);
 

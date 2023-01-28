@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		ActionIcon,
 		Alert,
 		Anchor,
 		Badge,
@@ -11,6 +12,7 @@
 		Group,
 		InputWrapper,
 		NativeSelect,
+		Notification,
 		SimpleGrid,
 		Skeleton,
 		Stack,
@@ -18,11 +20,14 @@
 		TextInput,
 		Title
 	} from '@svelteuidev/core';
-	import { searchProjects, type Repo } from '$lib/search';
+	import { clipboard } from '@svelteuidev/composables';
+	import { buildQuery, searchProjects, type Repo } from '$lib/search';
 	import { LANGUAGES } from '$lib/languages';
+	import Clipboard from '$lib/icons/Clipboard.svelte';
 
 	const MAX_TOPICS = 3;
 	const PAGE_ITEMS = 12;
+	const NOTIFICATION_TIMEOUT = 2000;
 
 	let loading = false;
 	let topic = '';
@@ -33,23 +38,12 @@
 	let reposPromise: Promise<{ items: Repo[]; total_count: number }>;
 	let totalCount = 0;
 
+	let showCopy = false;
+
 	async function search() {
 		loading = true;
 		try {
-			reposPromise = searchProjects(
-				{
-					topic: topic ? [topic] : undefined,
-					stars: '2..200',
-					forks: '2..200',
-					followers: '2..200',
-					license: licenses,
-					archived: false,
-					readme: ['contributing'],
-					language: [language]
-				},
-				page,
-				PAGE_ITEMS
-			);
+			reposPromise = searchProjects(params, page, PAGE_ITEMS);
 			const response = await reposPromise;
 			totalCount = response.total_count;
 		} catch {
@@ -63,6 +57,25 @@
 		page += delta;
 		await search();
 	}
+
+	function onCopy() {
+		showCopy = true;
+		setTimeout(() => {
+			showCopy = false;
+		}, NOTIFICATION_TIMEOUT);
+	}
+
+	$: params = {
+		topic: topic ? [topic] : undefined,
+		stars: '2..200',
+		forks: '2..200',
+		followers: '2..200',
+		license: licenses,
+		archived: false,
+		readme: ['contributing'],
+		language: [language]
+	};
+	$: query = buildQuery(params);
 </script>
 
 <Container>
@@ -100,6 +113,11 @@
 				Find me something!
 			</Button>
 		</Center>
+		<div class="float">
+			<ActionIcon variant="outline" use={[[clipboard, query]]} on:useclipboard={onCopy}>
+				<Clipboard />
+			</ActionIcon>
+		</div>
 	</Card>
 	{#if reposPromise}
 		{#await reposPromise}
@@ -133,7 +151,12 @@
 					{#each response.items as repo (repo.id)}
 						<Card shadow="sm" p="lg" withBorder>
 							<Stack>
-								<Anchor href={repo.html_url} external weight={'bold'}>{repo.name}</Anchor>
+								<Anchor
+									override={{ root: { overflowWrap: 'break-word' } }}
+									href={repo.html_url}
+									external
+									weight={'bold'}>{repo.full_name}</Anchor
+								>
 								<Text size="sm" lineClamp={4} override={{ lineHeight: '16px' }}
 									>{repo.description}</Text
 								>
@@ -184,4 +207,28 @@
 			</Alert>
 		{/await}
 	{/if}
+	{#if showCopy}
+		<div class="absolute">
+			<Notification
+				title="Copied to the clipboard"
+				on:close={() => {
+					showCopy = false;
+				}}
+			>
+				The Github query was copied to the clipboard
+			</Notification>
+		</div>
+	{/if}
 </Container>
+
+<style>
+	.float {
+		float: right;
+	}
+
+	.absolute {
+		position: absolute;
+		bottom: 20px;
+		right: 20px;
+	}
+</style>
