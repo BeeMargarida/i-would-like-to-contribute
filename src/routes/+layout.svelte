@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { colorScheme, ActionIcon, SvelteUIProvider } from '@svelteuidev/core';
-	import sun from '$lib/assets/icons/sun.svg';
-	import moon from '$lib/assets/icons/moon.svg';
+	import Sun from '$lib/icons/Sun.svelte';
+	import Moon from '$lib/icons/Moon.svelte';
 
 	function toggleTheme() {
 		colorScheme.update((v) => (v === 'light' ? 'dark' : 'light'));
@@ -16,9 +16,9 @@
 		size={30}
 	>
 		{#if $colorScheme === 'dark'}
-			<img alt="Dark theme" src={moon} />
+			<Moon />
 		{:else}
-			<img alt="Light theme" src={sun} />
+			<Sun />
 		{/if}
 	</ActionIcon>
 	<div class="app">
