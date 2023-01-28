@@ -20,6 +20,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>I would like to contribute</title>
+</svelte:head>
+
 <SvelteUIProvider themeObserver={$colorScheme} withNormalizeCSS>
 	<ActionIcon
 		override={{ position: 'absolute', top: 0, right: 0, margin: '1rem' }}
